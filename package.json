@@ -19,7 +19,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:generate": "prisma generate --schema ./prisma"
+    "prisma:generate": "prisma generate --schema ./prisma",
+    "docker:up": "docker compose --env-file .env up --detach",
+    "docker:down": "docker compose down"
   },
   "dependencies": {
     "@codegenie/serverless-express": "^4.14.1",
