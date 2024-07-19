@@ -1,7 +1,15 @@
+import { Exclude } from 'class-transformer';
+import { Cart } from '../../cart';
 
-export interface User {
-  id?: string;
+export class User {
+  id: string;
   name: string;
-  email?: string;
-  password?: string;
+  @Exclude()
+  password: string;
+  cart?: Cart;
 }
+
+export type UserDto = {
+  name: string;
+  password: string;
+};
