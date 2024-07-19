@@ -17,8 +17,19 @@ async function main() {
   });
   console.log('product created:', product);
 
+  const user = await prisma.user.create({
+    data: {
+      email: 'user@example.com',
+      firstName: 'John',
+      lastName: 'Doe',
+    },
+  });
+  console.log('user created:', user);
+
   const cart = await prisma.cart.create({
-    data: {},
+    data: {
+      user_id: user.id,
+    },
   });
   console.log('cart created:', cart);
 

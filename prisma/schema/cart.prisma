@@ -1,11 +1,13 @@
 model Cart {
     id String @id @default(uuid())
+    user_id String @unique
     created_at DateTime @default(now())
     updated_at DateTime @default(now())
     status CartStatuses @default(OPEN)
 
     @@map("carts")
     CartItem CartItem[]
+    user User @relation(fields: [user_id], references: [id])
 }
 
 enum CartStatuses {
