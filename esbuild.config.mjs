@@ -6,7 +6,7 @@ const options = {
   platform: 'node',
 
   sourcemap: false,
-  minify: true,
+  minify: false,
   tsconfig: 'tsconfig.build.json',
   external: [
     'class-validator',
