@@ -1,0 +1,11 @@
+model Product {
+    id String @id @default(uuid())
+    title String
+    description String
+    price Float
+    count Int
+    image String
+
+    @@map("products")
+    CartItem CartItem[]
+}
