@@ -1,6 +1,8 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
+
 async function main() {
+  await prisma.user.deleteMany();
   await prisma.product.deleteMany();
   await prisma.cart.deleteMany();
   await prisma.cartItem.deleteMany();
@@ -10,7 +12,6 @@ async function main() {
       title: 'Title from Prisma',
       description: 'Description from Prisma',
       price: 99.99,
-      count: 9,
       image:
         'https://www.dropbox.com/scl/fi/86ygbkrhtngnhji1h16x3/the-peripheral.jpeg?rlkey=l7rcibcq7bzek12q3wmni7f1e&dl=1',
     },
@@ -19,9 +20,8 @@ async function main() {
 
   const user = await prisma.user.create({
     data: {
-      email: 'user@example.com',
-      firstName: 'John',
-      lastName: 'Doe',
+      name: 'johndoe',
+      password: 'password',
     },
   });
   console.log('user created:', user);

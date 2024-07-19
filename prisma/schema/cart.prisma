@@ -7,7 +7,7 @@ model Cart {
 
     @@map("carts")
     items CartItem[]
-    user User @relation(fields: [user_id], references: [id])
+    user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 enum CartStatuses {
