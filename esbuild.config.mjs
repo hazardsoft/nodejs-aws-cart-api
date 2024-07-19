@@ -10,14 +10,13 @@ const options = {
   tsconfig: 'tsconfig.build.json',
   external: [
     'class-validator',
-    'class-transformer',
     '@nestjs/microservices',
     '@nestjs/websockets/socket-module',
   ],
 };
 
 await esbuild.build({
-  entryPoints: ['src/main.ts'],
+  entryPoints: ['src/handlers/cart.ts'],
   outfile: 'dist/handlers/cart/cart.js',
   ...options,
 });
