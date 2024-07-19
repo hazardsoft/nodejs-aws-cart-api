@@ -3,7 +3,6 @@ model Product {
     title String
     description String
     price Float
-    count Int
     image String
 
     @@map("products")
