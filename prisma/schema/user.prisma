@@ -5,5 +5,5 @@ model User {
     lastName String
 
     @@map("users")
-    Cart Cart?
+    cart Cart?
 }

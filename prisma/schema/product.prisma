@@ -7,5 +7,5 @@ model Product {
     image String
 
     @@map("products")
-    CartItem CartItem[]
+    items CartItem[]
 }

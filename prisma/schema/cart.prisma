@@ -6,7 +6,7 @@ model Cart {
     status CartStatuses @default(OPEN)
 
     @@map("carts")
-    CartItem CartItem[]
+    items CartItem[]
     user User @relation(fields: [user_id], references: [id])
 }
 
