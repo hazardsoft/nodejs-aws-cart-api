@@ -12,7 +12,6 @@ const options = {
     'class-validator',
     'class-transformer',
     '@nestjs/microservices',
-    '@nestjs/microservices/microservices-module',
     '@nestjs/websockets/socket-module',
   ],
 };

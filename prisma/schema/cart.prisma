@@ -1,0 +1,14 @@
+model Cart {
+    id String @id @default(uuid())
+    created_at DateTime @default(now())
+    updated_at DateTime @default(now())
+    status CartStatuses @default(OPEN)
+
+    @@map("carts")
+    CartItem CartItem[]
+}
+
+enum CartStatuses {
+  OPEN
+  ORDERED
+}

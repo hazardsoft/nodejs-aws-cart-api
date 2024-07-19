@@ -1,0 +1,9 @@
+model CartItem {
+    @@id([cart_id, product_id])
+    cart_id String
+    product_id String
+    count Int @default(0)
+    
+    @@map("cart_items")
+    cart Cart @relation(fields: [cart_id], references: [id])
+}
