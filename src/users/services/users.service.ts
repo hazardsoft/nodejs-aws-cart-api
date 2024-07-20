@@ -1,28 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { v4 } from 'uuid';
-
 import { User, UserDto } from '../models';
+import { PrismaService } from '../../db/prisma.service';
+import { UserId } from '../../shared/types';
 
 @Injectable()
 export class UsersService {
-  private readonly users: Record<string, User>;
+  constructor(private readonly prismaService: PrismaService) {}
 
-  constructor() {
-    this.users = {}
+  async findOne(userId: UserId): Promise<User> {
+    return this.prismaService.findUserByName(userId);
   }
 
-  findOne(userId: string): User {
-    return this.users[ userId ];
+  async createOne(user: UserDto): Promise<User> {
+    return this.prismaService.createUser(user);
   }
-
-  createOne({ name, password }: UserDto): User {
-    const id = v4();
-    const newUser = { id: name || id, name, password };
-
-    this.users[ id ] = newUser;
-
-    return newUser;
-  }
-
 }

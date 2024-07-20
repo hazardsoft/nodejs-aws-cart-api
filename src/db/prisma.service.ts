@@ -10,7 +10,14 @@ export class PrismaService extends PrismaClient {
   async findCartByUserId(userId: UserId) {
     const foundCart = await this.cart.findUnique({
       where: { user_id: userId },
-      include: { items: true },
+      include: {
+        items: {
+          select: {
+            product: true,
+            count: true,
+          },
+        },
+      },
     });
     return plainToClass(Cart, foundCart);
   }
@@ -18,7 +25,14 @@ export class PrismaService extends PrismaClient {
   async createCartByUserId(userId: UserId) {
     const createdCart = await this.cart.create({
       data: { user_id: userId },
-      include: { items: true },
+      include: {
+        items: {
+          select: {
+            product: true,
+            count: true,
+          },
+        },
+      },
     });
     return plainToClass(Cart, createdCart);
   }
@@ -52,7 +66,14 @@ export class PrismaService extends PrismaClient {
           },
         },
       },
-      include: { items: true },
+      include: {
+        items: {
+          select: {
+            product: true,
+            count: true,
+          },
+        },
+      },
     });
 
     return plainToClass(Cart, updatedCart);
@@ -65,6 +86,16 @@ export class PrismaService extends PrismaClient {
   async createUser(user: UserDto): Promise<User> {
     const createdUser = await this.user.create({ data: user });
     return plainToClass(User, createdUser);
+  }
+
+  async findUserById(userId: UserId): Promise<User> {
+    const foundUser = await this.user.findUnique({ where: { id: userId } });
+    return plainToClass(User, foundUser);
+  }
+
+  async findUserByName(name: string): Promise<User> {
+    const foundUser = await this.user.findUnique({ where: { name } });
+    return plainToClass(User, foundUser);
   }
 
   async deleteUser(userId: UserId): Promise<void> {
