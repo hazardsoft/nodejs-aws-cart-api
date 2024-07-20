@@ -6,6 +6,7 @@ import { PrismaService } from '../src/db/prisma.service';
 import { createApp } from './fixtures/e2e';
 import { generateBasicToken } from './helpers/token';
 import { UserDto } from '../src/users';
+import { OrderDto, OrderStatuses } from '../src/order';
 
 const userDto: UserDto = {
   name: `Test${Math.random()}`,
@@ -103,6 +104,34 @@ describe('CartController (e2e)', () => {
           ],
         },
         total: product.price * updatedCount,
+      },
+    });
+  });
+
+  test('should create order', async () => {
+    const order: Pick<OrderDto, 'address'> = {
+      address: {
+        firstName: `first${userDto.name}`,
+        lastName: `last${userDto.name}`,
+        comment: 'test comment for delivery',
+        address: 'test address for delivery',
+      },
+    };
+
+    const response = await request(app.getHttpServer())
+      .post('/api/profile/cart/checkout')
+      .set('Authorization', token)
+      .send(order);
+
+    expect(response.status).toBe(201);
+    expect(response.body).toMatchObject({
+      statusCode: 201,
+      message: 'OK',
+      data: {
+        order: {
+          status: OrderStatuses.CREATED,
+          address: order.address,
+        },
       },
     });
   });

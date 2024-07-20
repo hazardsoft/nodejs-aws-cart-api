@@ -4,5 +4,6 @@ model User {
     password String
 
     @@map("users")
-    cart Cart?
+    carts Cart[]
+    orders Order[]
 }

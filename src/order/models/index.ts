@@ -1,20 +1,28 @@
-import { CartItem } from '../../cart/models';
+import { User } from '../../users';
+import { Cart } from '../../cart/models';
 
-export type Order = {
-  id?: string,
-  userId: string;
-  cartId: string;
-  items: CartItem[]
-  payment: {
-    type: string,
-    address?: any,
-    creditCard?: any,
-  },
-  delivery: {
-    type: string,
-    address: any,
-  },
-  comments: string,
+export enum OrderStatuses {
+  CREATED = 'CREATED',
+  SHIPPED = 'SHIPPED',
+}
+
+export class Order {
+  id: string;
+  user_id: string;
+  user: User;
+  cart_id: string;
+  cart: Cart;
+  address: {
+    firstName: string;
+    lastName: string;
+    address: string;
+    comment: string;
+  };
   status: string;
   total: number;
 }
+
+export type OrderDto = Pick<
+  Order,
+  'user_id' | 'cart_id' | 'address' | 'total'
+>;

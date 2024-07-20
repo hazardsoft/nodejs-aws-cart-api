@@ -22,8 +22,4 @@ export class CartService {
   async updateByUserId(userId: UserId, item: CartItemDto): Promise<Cart> {
     return this.prismaService.updateByUserId(userId, item);
   }
-
-  async removeByUserId(userId: UserId): Promise<void> {
-    return this.prismaService.removeCartByUserId(userId);
-  }
 }

@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Delete,
   Put,
   Body,
   Req,
@@ -10,7 +9,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
-import { BasicAuthGuard, JwtAuthGuard } from '../auth';
+import { BasicAuthGuard } from '../auth';
 import { OrderService } from '../order';
 import { AppRequest, getUserIdFromRequest } from '../shared';
 
@@ -24,7 +23,6 @@ export class CartController {
     private orderService: OrderService,
   ) {}
 
-  // @UseGuards(JwtAuthGuard)
   @UseGuards(BasicAuthGuard)
   @Get()
   async findUserCart(@Req() req: AppRequest) {
@@ -39,7 +37,6 @@ export class CartController {
     };
   }
 
-  // @UseGuards(JwtAuthGuard)
   @UseGuards(BasicAuthGuard)
   @Put()
   async updateUserCart(@Req() req: AppRequest, @Body() body) {
@@ -59,20 +56,7 @@ export class CartController {
     };
   }
 
-  // @UseGuards(JwtAuthGuard)
-  // @UseGuards(BasicAuthGuard)
-  @Delete()
-  async clearUserCart(@Req() req: AppRequest) {
-    await this.cartService.removeByUserId(getUserIdFromRequest(req));
-
-    return {
-      statusCode: HttpStatus.OK,
-      message: 'OK',
-    };
-  }
-
-  // @UseGuards(JwtAuthGuard)
-  // @UseGuards(BasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @Post('checkout')
   async checkout(@Req() req: AppRequest, @Body() body) {
     const userId = getUserIdFromRequest(req);
@@ -88,19 +72,16 @@ export class CartController {
       };
     }
 
-    const { id: cartId, items } = cart;
-    const total = calculateCartTotal(cart);
-    const order = this.orderService.create({
-      ...body, // TODO: validate and pick only necessary data
-      userId,
-      cartId,
-      items,
-      total,
+    const { address } = body;
+    const order = await this.orderService.create({
+      user_id: userId,
+      cart_id: cart.id,
+      address,
+      total: calculateCartTotal(cart),
     });
-    await this.cartService.removeByUserId(userId);
 
     return {
-      statusCode: HttpStatus.OK,
+      statusCode: HttpStatus.CREATED,
       message: 'OK',
       data: { order },
     };

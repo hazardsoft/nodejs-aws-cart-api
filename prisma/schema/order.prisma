@@ -1,0 +1,17 @@
+model Order {
+    id String @id @default(uuid())
+    user_id String
+    cart_id String @unique
+    address Json
+    status OrderStatuses @default(CREATED)
+    total Float
+
+    @@map("orders")
+    user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    cart Cart @relation(fields: [cart_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
+
+enum OrderStatuses {
+  CREATED
+  SHIPPED
+}

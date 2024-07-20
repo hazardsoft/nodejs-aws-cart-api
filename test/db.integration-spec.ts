@@ -1,9 +1,11 @@
 import { User, UserDto } from '../src/users';
-import { CartStatuses, Product, ProductDto } from '../src/cart';
+import { CartStatuses, ProductDto } from '../src/cart';
 import { PrismaService } from '../src/db/prisma.service';
+import { calculateCartTotal } from '../src/cart/models-rules';
+import { OrderStatuses } from '../src/order';
 
 const userDto: UserDto = {
-  name: 'testuser',
+  name: `testuser${Math.random()}`,
   password: 'password',
 };
 const productDto: ProductDto = {
@@ -48,7 +50,7 @@ describe('PrismaService (e2e)', () => {
       count: 1000,
     });
     expect(updatedCart.items.length).toBe(1);
-    expect(updatedCart.items[0].product_id).toBe(product.id);
+    expect(updatedCart.items[0].product.id).toBe(product.id);
     expect(updatedCart.items[0].count).toBe(1000);
 
     const updatedCart2 = await prismaService.updateByUserId(user.id, {
@@ -56,8 +58,25 @@ describe('PrismaService (e2e)', () => {
       count: 1001,
     });
     expect(updatedCart2.items.length).toBe(1);
-    expect(updatedCart2.items[0].product_id).toBe(product.id);
+    expect(updatedCart2.items[0].product.id).toBe(product.id);
     expect(updatedCart2.items[0].count).toBe(1001);
+
+    const createdOrder = await prismaService.createOrder({
+      user_id: user.id,
+      cart_id: updatedCart.id,
+      address: {
+        firstName: `first${user.name}`,
+        lastName: `last${user.name}`,
+        address: 'test address',
+        comment: 'test comment',
+      },
+      total: calculateCartTotal(updatedCart),
+    });
+
+    expect(createdOrder.id).toBeTruthy();
+    expect(createdOrder.user_id).toBe(user.id);
+    expect(createdOrder.cart_id).toBe(updatedCart.id);
+    expect(createdOrder.status).toBe(OrderStatuses.CREATED);
 
     await prismaService.deleteUser(user.id);
     const deletedCart = await prismaService.findCartByUserId(user.id);
