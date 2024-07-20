@@ -10,7 +10,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 
-// import { BasicAuthGuard, JwtAuthGuard } from '../auth';
+import { BasicAuthGuard, JwtAuthGuard } from '../auth';
 import { OrderService } from '../order';
 import { AppRequest, getUserIdFromRequest } from '../shared';
 
@@ -25,7 +25,7 @@ export class CartController {
   ) {}
 
   // @UseGuards(JwtAuthGuard)
-  // @UseGuards(BasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @Get()
   async findUserCart(@Req() req: AppRequest) {
     const cart = await this.cartService.findOrCreateByUserId(
@@ -40,7 +40,7 @@ export class CartController {
   }
 
   // @UseGuards(JwtAuthGuard)
-  // @UseGuards(BasicAuthGuard)
+  @UseGuards(BasicAuthGuard)
   @Put()
   async updateUserCart(@Req() req: AppRequest, @Body() body) {
     // TODO: validate body payload...
