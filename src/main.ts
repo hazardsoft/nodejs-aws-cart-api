@@ -1,18 +1,6 @@
-import { NestFactory } from '@nestjs/core';
-import helmet from 'helmet';
+import { bootstrap } from './bootstrap';
 
-import { AppModule } from './app.module';
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  app.enableCors({
-    origin: (req, callback) => callback(null, true),
-  });
-  app.use(helmet());
-  await app.init();
-
-  return app;
-}
-
-export { bootstrap };
+bootstrap().then((app) => {
+  app.listen(3001);
+  console.log('Server started');
+});
