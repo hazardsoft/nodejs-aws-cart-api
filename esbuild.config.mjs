@@ -1,4 +1,5 @@
 import * as esbuild from 'esbuild';
+import { copy } from 'esbuild-plugin-copy';
 
 const options = {
   format: 'cjs',
@@ -8,10 +9,19 @@ const options = {
   sourcemap: false,
   minify: false,
   tsconfig: 'tsconfig.build.json',
-  external: [
-    'class-validator',
-    '@nestjs/microservices',
-    '@nestjs/websockets/socket-module',
+  external: ['@nestjs/microservices', '@nestjs/websockets/socket-module'],
+  plugins: [
+    copy({
+      resolveFrom: 'cwd',
+      assets: [
+        {
+          from: [
+            'node_modules/.prisma/client/libquery_engine-rhel-openssl-3.0.x.so.node',
+          ],
+          to: ['dist/handlers/cart'],
+        },
+      ],
+    }),
   ],
 };
 
