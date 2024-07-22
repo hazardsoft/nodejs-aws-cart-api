@@ -6,6 +6,7 @@ export class User {
   name: string;
   @Exclude()
   password: string;
+  @Exclude()
   cart?: Cart;
 }
 

@@ -1,17 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { plainToClass } from 'class-transformer';
 
-import {
-  Cart,
-  CartItemDto,
-  CartStatuses,
-  Product,
-  ProductDto,
-} from '../cart/models';
+import { CartItemDto, CartStatuses } from '../cart/models';
 import { UserId } from '../shared/types';
-import { UserDto, User } from '../users/models';
-import { Order, OrderDto } from '../order/models';
+import { UserDto } from '../users/models';
+import { OrderDto, OrderStatuses } from '../order/models';
 
 @Injectable()
 export class PrismaService extends PrismaClient {
@@ -23,14 +16,11 @@ export class PrismaService extends PrismaClient {
       },
       include: {
         items: {
-          select: {
-            product: true,
-            count: true,
-          },
+          select: { product_id: true, count: true },
         },
       },
     });
-    return plainToClass(Cart, foundCart);
+    return foundCart;
   }
 
   async createCartByUserId(userId: UserId) {
@@ -38,14 +28,11 @@ export class PrismaService extends PrismaClient {
       data: { user_id: userId },
       include: {
         items: {
-          select: {
-            product: true,
-            count: true,
-          },
+          select: { product_id: true, count: true },
         },
       },
     });
-    return plainToClass(Cart, createdCart);
+    return createdCart;
   }
 
   async findOrCreateCartByUserId(userId: UserId) {
@@ -66,70 +53,68 @@ export class PrismaService extends PrismaClient {
             where: {
               cart_id_product_id: {
                 cart_id: cart.id,
-                product_id: updatedItem.product.id,
+                product_id: updatedItem.product_id,
               },
             },
             create: {
-              product_id: updatedItem.product.id,
+              product_id: updatedItem.product_id,
               count: updatedItem.count,
             },
             update: { count: updatedItem.count },
           },
         },
+        updated_at: new Date(),
       },
       include: {
         items: {
-          select: {
-            product: true,
-            count: true,
-          },
+          select: { product_id: true, count: true },
         },
       },
     });
 
-    return plainToClass(Cart, updatedCart);
+    return updatedCart;
   }
 
-  async createUser(user: UserDto): Promise<User> {
+  async createUser(user: UserDto) {
     const createdUser = await this.user.create({ data: user });
-    return plainToClass(User, createdUser);
+    return createdUser;
   }
 
-  async findUserById(userId: UserId): Promise<User> {
+  async findUserById(userId: UserId) {
     const foundUser = await this.user.findUnique({ where: { id: userId } });
-    return plainToClass(User, foundUser);
+    return foundUser;
   }
 
-  async findUserByName(name: string): Promise<User> {
+  async findUserByName(name: string) {
     const foundUser = await this.user.findUnique({ where: { name } });
-    return plainToClass(User, foundUser);
+    return foundUser;
   }
 
-  async deleteUser(userId: UserId): Promise<void> {
-    await this.user.delete({ where: { id: userId } });
+  async deleteUser(userId: UserId) {
+    const deletedUser = await this.user.delete({ where: { id: userId } });
+    return deletedUser;
   }
 
-  async createProduct(product: ProductDto): Promise<Product> {
-    const createProduct = await this.product.create({ data: product });
-    return plainToClass(Product, createProduct);
-  }
-
-  async createOrder(orderDto: OrderDto): Promise<Order> {
-    const results = await this.$transaction([
+  async createOrder(orderDto: OrderDto) {
+    const [createdOrder, updatedCart] = await this.$transaction([
       this.order.create({
         data: orderDto,
         include: {
-          cart: {
-            select: { items: { select: { product: true, count: true } } },
-          },
+          cart: false,
         },
       }),
       this.cart.update({
         where: { id: orderDto.cart_id },
-        data: { status: CartStatuses.ORDERED },
+        data: { status: CartStatuses.ORDERED, updated_at: new Date() },
+        select: {
+          id: true,
+          status: true,
+          items: {
+            select: { product_id: true, count: true },
+          },
+        },
       }),
     ]);
-    const createdOrder = results[0];
-    return plainToClass(Order, createdOrder);
+    return { ...createdOrder, cart: { ...updatedCart } };
   }
 }

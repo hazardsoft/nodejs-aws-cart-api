@@ -1,41 +1,36 @@
 import { Exclude, Transform } from 'class-transformer';
+import { IsInt, IsUUID, Min } from 'class-validator';
 
 export enum CartStatuses {
   OPEN = 'OPEN',
   ORDERED = 'ORDERED',
 }
 
-export class Product {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  image: string;
-}
-
-export type ProductDto = Omit<Product, 'id'>;
-
 export class CartItem {
   @Exclude()
   card_id: string;
-  @Exclude()
   product_id: string;
-  product?: Product;
   count: number;
 }
 
-export type CartItemDto = {
-  product: Product;
+export class CartItemDto {
+  @IsUUID()
+  product_id: string;
+  @IsInt()
+  @Min(1)
   count: number;
-};
+}
 
 export class Cart {
   id: string;
+  @Exclude()
   user_id: string;
+  @Exclude()
   @Transform(({ value }) =>
     value instanceof Date ? value.toISOString() : value,
   )
   created_at: string;
+  @Exclude()
   @Transform(({ value }) =>
     value instanceof Date ? value.toISOString() : value,
   )

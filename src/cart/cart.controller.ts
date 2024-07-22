@@ -10,11 +10,15 @@ import {
 } from '@nestjs/common';
 
 import { BasicAuthGuard } from '../auth';
-import { OrderService } from '../order';
-import { AppRequest, getUserIdFromRequest } from '../shared';
-
-import { calculateCartTotal } from './models-rules';
+import { OrderInputDto, OrderService } from '../order';
+import {
+  AppRequest,
+  getUserIdFromRequest,
+  CartResponse,
+  OrderResponse,
+} from '../shared';
 import { CartService } from './services';
+import { CartItemDto } from './models';
 
 @Controller('api/profile/cart')
 export class CartController {
@@ -25,7 +29,7 @@ export class CartController {
 
   @UseGuards(BasicAuthGuard)
   @Get()
-  async findUserCart(@Req() req: AppRequest) {
+  async findUserCart(@Req() req: AppRequest): Promise<CartResponse> {
     const cart = await this.cartService.findOrCreateByUserId(
       getUserIdFromRequest(req),
     );
@@ -33,32 +37,34 @@ export class CartController {
     return {
       statusCode: HttpStatus.OK,
       message: 'OK',
-      data: { cart, total: calculateCartTotal(cart) },
+      data: { cart },
     };
   }
 
   @UseGuards(BasicAuthGuard)
   @Put()
-  async updateUserCart(@Req() req: AppRequest, @Body() body) {
-    // TODO: validate body payload...
+  async updateUserCart(
+    @Req() req: AppRequest,
+    @Body() updatedItemDto: CartItemDto,
+  ): Promise<CartResponse> {
     const cart = await this.cartService.updateByUserId(
       getUserIdFromRequest(req),
-      body,
+      updatedItemDto,
     );
 
     return {
       statusCode: HttpStatus.OK,
       message: 'OK',
-      data: {
-        cart,
-        total: calculateCartTotal(cart),
-      },
+      data: { cart },
     };
   }
 
   @UseGuards(BasicAuthGuard)
   @Post('checkout')
-  async checkout(@Req() req: AppRequest, @Body() body) {
+  async checkout(
+    @Req() req: AppRequest,
+    @Body() orderDto: OrderInputDto,
+  ): Promise<OrderResponse> {
     const userId = getUserIdFromRequest(req);
     const cart = await this.cartService.findByUserId(userId);
 
@@ -72,12 +78,11 @@ export class CartController {
       };
     }
 
-    const { address } = body;
+    const { delivery } = orderDto;
     const order = await this.orderService.create({
       user_id: userId,
       cart_id: cart.id,
-      address,
-      total: calculateCartTotal(cart),
+      delivery,
     });
 
     return {
