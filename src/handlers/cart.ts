@@ -1,6 +1,6 @@
 import serverlessExpress from '@codegenie/serverless-express';
 import { Callback, Context, Handler } from 'aws-lambda';
-import { bootstrap } from '../bootstrap.js';
+import { bootstrap } from '../bootstrap';
 
 let server: Handler;
 

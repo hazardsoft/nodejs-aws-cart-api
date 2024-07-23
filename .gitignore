@@ -2,7 +2,8 @@
 dist
 node_modules
 cdk.out
-.env
+cdk.context.json
+.env*
 !.env.example
 
 # Logs
