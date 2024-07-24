@@ -5,7 +5,7 @@ const options = {
   bundle: true,
   platform: 'node',
 
-  sourcemap: false,
+  sourcemap: true,
   minify: false,
   tsconfig: 'tsconfig.cdk.json',
   packages: 'external'
