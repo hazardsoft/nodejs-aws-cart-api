@@ -3,12 +3,11 @@ import {
   InstanceClass,
   InstanceSize,
   InstanceType,
-  Peer,
   Port,
-  SecurityGroup,
-  type IVpc
+  type ISecurityGroup,
+  type IVpc,
+  type SubnetSelection
 } from 'aws-cdk-lib/aws-ec2'
-import type { IFunction } from 'aws-cdk-lib/aws-lambda'
 import { RetentionDays } from 'aws-cdk-lib/aws-logs'
 import {
   Credentials,
@@ -17,22 +16,23 @@ import {
   PerformanceInsightRetention,
   PostgresEngineVersion,
   StorageType,
-  SubnetGroup,
   type IDatabaseInstance
 } from 'aws-cdk-lib/aws-rds'
 import { Construct } from 'constructs'
 
 interface CartServiceDatabaseProps {
-  handler: IFunction
   database: {
     credentials: {
       username: string
       password: string
     }
-    host: string
-    port: number
   }
-  vpc: IVpc
+  network: {
+    vpc: IVpc
+    vpcSubnets: SubnetSelection
+    securityGroups: ISecurityGroup[]
+    availabilityZone: string
+  }
 }
 
 export class CartServiceDatabase extends Construct {
@@ -41,35 +41,10 @@ export class CartServiceDatabase extends Construct {
   constructor(scope: Construct, id: string, props: CartServiceDatabaseProps) {
     super(scope, id)
 
-    const subnetGroup = new SubnetGroup(this, 'CartServiceSubnetGroup', {
-      description: 'Subnet group for cart database',
-      vpc: props.vpc,
-      vpcSubnets: {
-        // by default private vpc private subnets are used
-        // on this case vpc PUBLIC subnets are used to provide access to RDS instance from Internet
-        subnets: props.vpc.publicSubnets
-      }
-    })
-
-    const securityGroup = new SecurityGroup(this, 'CartServiceSecurityGroup', {
-      description: 'Security group for cart service',
-      allowAllOutbound: false,
-      vpc: props.vpc
-    })
-    securityGroup.addIngressRule(
-      Peer.anyIpv4(),
-      Port.tcp(props.database.port),
-      `Allow incoming traffic to ${props.database.port}/TCP from any IP v4`
-    )
-    securityGroup.addEgressRule(
-      Peer.anyIpv4(),
-      Port.tcp(props.database.port),
-      `Allow outgoing traffic from ${props.database.port}/TCP to any IP v4`
-    )
-
     this.db = new DatabaseInstance(this, 'CartServiceDatabase', {
       engine: DatabaseInstanceEngine.postgres({ version: PostgresEngineVersion.VER_16_3 }),
       multiAz: false,
+      availabilityZone: props.network.availabilityZone,
       credentials: Credentials.fromPassword(
         props.database.credentials.username,
         SecretValue.unsafePlainText(props.database.credentials.password)
@@ -77,11 +52,11 @@ export class CartServiceDatabase extends Construct {
       instanceType: InstanceType.of(InstanceClass.T3, InstanceSize.MICRO),
       storageType: StorageType.GP2,
       allocatedStorage: 20,
-      vpc: props.vpc,
-      subnetGroup: subnetGroup,
-      securityGroups: [securityGroup],
+      vpc: props.network.vpc,
+      vpcSubnets: props.network.vpcSubnets,
+      securityGroups: props.network.securityGroups,
       publiclyAccessible: true,
-      port: props.database.port,
+      port: Number(Port.POSTGRES.toString()),
       performanceInsightRetention: PerformanceInsightRetention.DEFAULT,
       backupRetention: Duration.seconds(0),
       storageEncrypted: true,
@@ -89,7 +64,5 @@ export class CartServiceDatabase extends Construct {
       deletionProtection: false,
       cloudwatchLogsRetention: RetentionDays.ONE_DAY
     })
-
-    this.db.grantConnect(props.handler, props.database.credentials.username)
   }
 }

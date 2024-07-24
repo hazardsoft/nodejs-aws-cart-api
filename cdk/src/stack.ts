@@ -4,7 +4,8 @@ import type { Construct } from 'constructs'
 import { config } from './config'
 import { CartServiceDatabase } from './constructs/db'
 import { CartServiceApi } from './constructs/api'
-import { Vpc } from 'aws-cdk-lib/aws-ec2'
+import { CartServiceNetwork } from './constructs/network'
+import { createDatabaseUrl } from './helpers/db'
 
 export class CartService extends Stack {
   constructor(scope: Construct, id: string) {
@@ -15,28 +16,41 @@ export class CartService extends Stack {
       }
     })
 
-    const vpc = Vpc.fromLookup(this, 'DefaultVpc', {
-      isDefault: true
-    })
+    const network = new CartServiceNetwork(this, 'CartServiceNetwork')
 
-    const handlers = new CartServiceHandlers(this, 'CartServiceHandlers', {
-      database: {
-        url: config.database.url
-      }
-    })
-
-    new CartServiceDatabase(this, 'CartServiceDatabase', {
-      handler: handlers.cartHandler,
+    const db = new CartServiceDatabase(this, 'CartServiceDatabase', {
       database: {
         credentials: {
           username: config.database.credentials.username,
           password: config.database.credentials.password
-        },
-        host: config.database.host,
-        port: config.database.port
+        }
       },
-      vpc
+      network: {
+        vpc: network.vpc,
+        vpcSubnets: network.getSubnetsForRDS(),
+        securityGroups: network.getSecurityGroupsForRDS(),
+        availabilityZone: network.availabilityZone
+      }
     })
+
+    const handlers = new CartServiceHandlers(this, 'CartServiceHandlers', {
+      database: {
+        url: createDatabaseUrl(
+          config.database.credentials.username,
+          config.database.credentials.password,
+          db.db.instanceEndpoint.hostname,
+          db.db.instanceEndpoint.port
+        )
+      },
+      timeout: config.handlers.timeout,
+      network: {
+        vpc: network.vpc,
+        vpcSubnets: network.getSubnetsForLambda(),
+        securityGroups: network.getSecurityGroupsForLambda()
+      }
+    })
+
+    db.db.grantConnect(handlers.cartHandler, config.database.credentials.username)
 
     new CartServiceApi(this, 'CartServiceApi', {
       cartHandler: handlers.cartHandler
