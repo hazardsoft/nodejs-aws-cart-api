@@ -29,6 +29,13 @@ export class CartService {
     );
   }
 
+  async removeByUserId(userId:UserId) {
+    return plainToClass(
+      Cart,
+      await this.prismaService.deleteCartByUserId(userId),
+    );
+  }
+
   async updateByUserId(userId: UserId, item: CartItemDto): Promise<Cart> {
     return plainToClass(Cart, this.prismaService.updateByUserId(userId, item));
   }

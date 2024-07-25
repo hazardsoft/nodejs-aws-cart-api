@@ -35,6 +35,13 @@ export class PrismaService extends PrismaClient {
     return createdCart;
   }
 
+  async deleteCartByUserId(userId: UserId) {
+    const deletedCart = await this.cart.deleteMany({
+      where: { user_id: userId },
+    });
+    return deletedCart;
+  }
+
   async findOrCreateCartByUserId(userId: UserId) {
     return (
       (await this.findCartByUserId(userId)) ??

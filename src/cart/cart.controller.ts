@@ -7,6 +7,7 @@ import {
   Post,
   UseGuards,
   HttpStatus,
+  Delete,
 } from '@nestjs/common';
 
 import { BasicAuthGuard } from '../auth';
@@ -56,6 +57,17 @@ export class CartController {
       statusCode: HttpStatus.OK,
       message: 'OK',
       data: { cart },
+    };
+  }
+
+  @UseGuards(BasicAuthGuard)
+  @Delete()
+  clearUserCart(@Req() req: AppRequest) {
+    this.cartService.removeByUserId(getUserIdFromRequest(req));
+
+    return {
+      statusCode: HttpStatus.NO_CONTENT,
+      message: 'OK',
     };
   }
 
