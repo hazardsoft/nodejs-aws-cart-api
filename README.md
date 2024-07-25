@@ -1,75 +1,57 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo_text.svg" width="320" alt="Nest Logo" /></a>
-</p>
+# Overview
 
-[travis-image]: https://api.travis-ci.org/nestjs/nest.svg?branch=master
-[travis-url]: https://travis-ci.org/nestjs/nest
-[linux-image]: https://img.shields.io/travis/nestjs/nest/master.svg?label=linux
-[linux-url]: https://travis-ci.org/nestjs/nest
+Cart Service is responsible for creation carts/orders.
+
+## NPM scripts
+
+- `build` - builds cart handler;
+
+- `test:integration` - runs integration tests for Prisma service;
+
+- `test:e2e` - runs e2e tests;
+
+- `prisma:generate` - generates Prisma client based on schema files stored in [prisma/schema](./prisma/schema/);
+
+- `prisma:deploy:local` - creates databases based on migration files stored in [migrations](./migrations/);
+
+- `prisma:deploy:remote` - same but uses `.env.remote` to connect to remote Postgres database;
+
+- `prisma:seed:local` - populates Postgres database with initial data (see [seed.ts](./prisma/seed.ts));
   
-  <p align="center">A progressive <a href="http://nodejs.org" target="blank">Node.js</a> framework for building efficient and scalable server-side applications, heavily inspired by <a href="https://angular.io" target="blank">Angular</a>.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore"><img src="https://img.shields.io/npm/dm/@nestjs/core.svg" alt="NPM Downloads" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://api.travis-ci.org/nestjs/nest.svg?branch=master" alt="Travis" /></a>
-<a href="https://travis-ci.org/nestjs/nest"><img src="https://img.shields.io/travis/nestjs/nest/master.svg?label=linux" alt="Linux" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#5" alt="Coverage" /></a>
-<a href="https://gitter.im/nestjs/nestjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=body_badge"><img src="https://badges.gitter.im/nestjs/nestjs.svg" alt="Gitter" /></a>
-<a href="https://opencollective.com/nest#backer"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec"><img src="https://img.shields.io/badge/Donate-PayPal-dc3d53.svg"/></a>
-  <a href="https://twitter.com/nestframework"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- `prisma:seed:remote` - same but uses `.env.remote` to connect to remote Postgres database;
+  
+- `docker:up` - Starts DynamoDB local service (see [docker-compose.yml](./docker-compose.yml) for implementation details);
 
-## Description
+- `docker:down` - Stops DynamoDB local service.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Environment
 
-## Installation
+Copy/paste [.env.example](./.env.example) file and rename it to the following:
 
-```bash
-$ npm install
-```
+1. `.env.local` - used to work with local instance of Postgres database;
+2. `.env.remote` - used to work with AWS RDS DB instance of Postgres database;
 
-## Running the app
+### Populate Postgres database
 
-```bash
-# development
-$ npm run start
+NPM script `prisma:seed:{destination}` (where destination is local/remote) uses `.env.local` or `.env.remote` file in order to fill Postges with initial data.
+Prisma consumes `DATABASE_URL` env var in order to connect to the database.
 
-# watch mode
-$ npm run start:dev
+## Testing
 
-# production mode
-$ npm run start:prod
-```
+### Prerequisites
 
-## Test
+Docker compose is used to spin up docker container with Postgres in order to run integration/e2e tests.
+To prepare database in docker container perform the next steps:
+1. run `npm run docker:up` command to spin up docker container with Postges database;
+2. run `npm run prisma:deploy:local` command to create tables in docker container;
+3. run `npm run prisma:seed:local` command to fill Postgres database with initial data.
 
-```bash
-# unit tests
-$ npm run test
+### Integration Tests
 
-# e2e tests
-$ npm run test:e2e
+[db.integration-spec.ts](./test/db.integration-spec.ts) contains integration tests for [Prisma service](./src/db/prisma.service.ts).
+Run `npm run test:integration` command to run integration tests.
 
-# test coverage
-$ npm run test:cov
-```
+### E2E Tests
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-  Nest is [MIT licensed](LICENSE).
+[test/cart.e2e-spec.ts](./test/cart.e2e-spec.ts) contains e2e tests for [Cart controller](./src/cart/cart.controller.ts).
+Run `npm run test:e2e` command to run e2e tests.
