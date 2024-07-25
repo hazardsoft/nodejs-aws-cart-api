@@ -28,7 +28,7 @@ Cart Service is responsible for creation carts/orders.
 
 Copy/paste [.env.example](./.env.example) file and rename it to the following:
 
-1. `.env.local` - used to work with local instance of Postgres database;
+1. `.env.local`/`.env` - used to work with local instance of Postgres database;
 2. `.env.remote` - used to work with AWS RDS DB instance of Postgres database;
 
 ### Populate Postgres database
