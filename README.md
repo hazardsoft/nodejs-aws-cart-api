@@ -38,7 +38,9 @@ Prisma consumes `DATABASE_URL` env var in order to connect to the database.
 
 ## Testing
 
-### Prerequisites
+### Integration/E2E Tests
+
+#### Prerequisites
 
 Docker compose is used to spin up docker container with Postgres in order to run integration/e2e tests.
 To prepare database in docker container perform the next steps:
@@ -46,12 +48,13 @@ To prepare database in docker container perform the next steps:
 2. run `npm run prisma:deploy:local` command to create tables in docker container;
 3. run `npm run prisma:seed:local` command to fill Postgres database with initial data.
 
-### Integration Tests
+#### Run Tests
 
-[db.integration-spec.ts](./test/db.integration-spec.ts) contains integration tests for [Prisma service](./src/db/prisma.service.ts).
-Run `npm run test:integration` command to run integration tests.
+1. [db.integration-spec.ts](./test/db.integration-spec.ts) contains integration tests for [Prisma service](./src/db/prisma.service.ts).
+ -  `npm run test:integration` command to run integration tests;
+2. [test/cart.e2e-spec.ts](./test/cart.e2e-spec.ts) contains e2e tests for [Cart controller](./src/cart/cart.controller.ts).
+ - `npm run test:e2e` command to run e2e tests.
 
-### E2E Tests
+### Postman
 
-[test/cart.e2e-spec.ts](./test/cart.e2e-spec.ts) contains e2e tests for [Cart controller](./src/cart/cart.controller.ts).
-Run `npm run test:e2e` command to run e2e tests.
+Use [postman_collection.json](./postman/Cart%20Service.postman_collection.json) collection to test REST API endpoints with [Postman](https://www.postman.com)
