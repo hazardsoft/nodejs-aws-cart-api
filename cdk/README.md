@@ -2,6 +2,7 @@
 
 Contains AWS CDK infrastructure as code for Cart Service.
 Describes the following resources:
+
 1. Lambda cart handler (uses basic auth token encoded in Base64 provided in `Authorization` request header to authenticate an user);
 2. RDS DB instance (Postgres) to store users, cart items, carts, orders;
 3. Network resources (e.g. VPC and security groups) to provide means of communication between Lambda and RDS DB instance, RDS DB instance and Internet
@@ -30,7 +31,6 @@ The following env var is passed into cart handler in order to provide access to 
 - `build` - builds Lambdas and AWS CDK application
 
 - `test` - runs unit tests for AWS CDK application
-  
 - `cdk` - builds/runs AWS CDK project (no need to call manually, it's used in `cdk.json` config file);
 
 - `cdk:diff` - runs AWS CDK diff command to illustrate how local template is different to a deployed one (in order to use a user's profile the script needs to be run as `npm run cdk:diff -- --profile={profile_name}`)
@@ -38,7 +38,6 @@ The following env var is passed into cart handler in order to provide access to 
 - `cdk:deploy` - runs AWS CDK deploy command to deploy stack (in order to use a user's profile the script needs to be run as `npm run cdk:deploy -- --profile={profile_name}`)
 
 - `cdk:destroy` - runs AWS CDK destroy command to destroy previously deployed stack (in order to use a user's profile the script needs to be run as `npm run cdk:destroy -- --profile={profile_name}`)
-
 
 ## Deployment
 
