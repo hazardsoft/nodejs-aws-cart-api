@@ -12,4 +12,52 @@ describe('Cart Service AWS CDK Stack Tests', () => {
       Handler: 'cart.handler'
     })
   })
+
+  test('should have 3 security groups with ingress/egress rules', () => {
+    template.resourceCountIs('AWS::EC2::SecurityGroup', 3)
+    template.resourceCountIs('AWS::EC2::SecurityGroupIngress', 1)
+    template.resourceCountIs('AWS::EC2::SecurityGroupEgress', 1)
+
+    template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+      GroupDescription: 'Security group for cart service (RDS to Lambda)'
+    })
+    template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+      GroupDescription: 'Security group for cart service (Internet to RDS)'
+    })
+    template.hasResourceProperties('AWS::EC2::SecurityGroup', {
+      GroupDescription: 'Security group for cart service (Lambda to RDS)'
+    })
+  })
+
+  test('should have 1 RDS instance', () => {
+    template.resourceCountIs('AWS::RDS::DBInstance', 1)
+
+    template.hasResourceProperties('AWS::RDS::DBInstance', {
+      AllocatedStorage: '20',
+      StorageType: 'gp2',
+      BackupRetentionPeriod: 0,
+      DBInstanceClass: 'db.t3.micro',
+      Engine: 'postgres',
+      MultiAZ: false,
+      PubliclyAccessible: true
+    })
+  })
+
+  test('should have REST API', () => {
+    template.resourceCountIs('AWS::ApiGateway::RestApi', 1)
+
+    template.resourceCountIs('AWS::ApiGateway::Resource', 1)
+    template.hasResourceProperties('AWS::ApiGateway::Resource', {
+      PathPart: '{proxy+}'
+    })
+
+    template.resourceCountIs('AWS::ApiGateway::Method', 2)
+    template.hasResourceProperties('AWS::ApiGateway::Method', {
+      HttpMethod: 'ANY'
+    })
+    template.hasResourceProperties('AWS::ApiGateway::Method', {
+      HttpMethod: 'OPTIONS'
+    })
+
+  })
 })
