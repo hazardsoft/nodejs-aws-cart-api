@@ -1,0 +1,16 @@
+.git/
+cdk/
+dist/
+node_modules/
+postman/
+test/
+.dockerignore
+.DS_Store
+.env*
+.eslintrc.js
+.gitignore
+.prettierrc
+docker-compose.yml
+Dockerfile
+nest-cli.json
+README.md

@@ -25,8 +25,10 @@
     "prisma:deploy:remote": "env-cmd --file .env.remote npx prisma migrate deploy --schema ./prisma",
     "prisma:seed:local": "env-cmd --file .env.local prisma db seed",
     "prisma:seed:remote": "env-cmd --file .env.remote prisma db seed",
-    "docker:up": "docker compose --env-file .env.local up --detach",
-    "docker:down": "docker compose down"
+    "docker:up": "docker compose --env-file .env.docker up --detach",
+    "docker:down": "docker compose down",
+    "docker:build": "docker build --tag hazardsoft/cart-service:latest .",
+    "docker:push": "docker push hazardsoft/cart-service:latest"
   },
   "dependencies": {
     "@codegenie/serverless-express": "^4.14.1",
