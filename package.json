@@ -21,11 +21,11 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:integration": "jest --config ./test/jest-integration.json",
     "prisma:generate": "prisma generate --schema ./prisma",
-    "prisma:deploy:local": "env-cmd --file .env npx prisma migrate deploy --schema ./prisma",
+    "prisma:deploy:local": "env-cmd --file .env.local npx prisma migrate deploy --schema ./prisma",
     "prisma:deploy:remote": "env-cmd --file .env.remote npx prisma migrate deploy --schema ./prisma",
-    "prisma:seed:local": "env-cmd --file .env prisma db seed",
+    "prisma:seed:local": "env-cmd --file .env.local prisma db seed",
     "prisma:seed:remote": "env-cmd --file .env.remote prisma db seed",
-    "docker:up": "docker compose --env-file .env up --detach",
+    "docker:up": "docker compose --env-file .env.local up --detach",
     "docker:down": "docker compose down"
   },
   "dependencies": {
