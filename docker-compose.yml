@@ -10,13 +10,13 @@ services:
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USERNAME}']
-      interval: 5s
-      timeout: 5s
+      interval: 2s
+      timeout: 2s
       retries: 5
 
   server:
     image: hazardsoft/cart-service
-    command: sh -c "npx prisma migrate deploy --schema ./prisma && npx prisma db seed && npm run start:prod"
+    command: sh -c "npm run prisma:deploy && node ./dist/seed.js && npm run start:prod"
     restart: always
     depends_on:
       db:
