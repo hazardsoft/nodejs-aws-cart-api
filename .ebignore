@@ -1,6 +1,7 @@
 # Ignore everything
 *
 # Except
+!.ebextensions
 !migrations
 !prisma
 !src
