@@ -30,7 +30,11 @@
     "docker:up": "docker compose --env-file .env.docker up --detach",
     "docker:down": "docker compose down",
     "docker:build": "docker build --tag hazardsoft/cart-service:latest .",
-    "docker:push": "docker push hazardsoft/cart-service:latest"
+    "docker:push": "docker push hazardsoft/cart-service:latest",
+    "eb:init": "eb init hazardsoft-cart-api",
+    "eb:create": "env-cmd -x -f .env.remote eb create prod --cname hazardsoft-cart-api-prod --single --envvars DATABASE_URL=\\$DATABASE_URL",
+    "eb:deploy": "eb deploy prod",
+    "eb:destroy": "eb terminate --all"
   },
   "dependencies": {
     "@codegenie/serverless-express": "^4.14.1",
