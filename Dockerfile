@@ -32,9 +32,8 @@ COPY --from=prisma /tmp/dev/node_modules/.prisma ./node_modules/.prisma/
 COPY --from=prisma /tmp/dev/migrations ./migrations/
 COPY --from=prisma /tmp/dev/prisma ./prisma/
 
-# Query Engine for linux
-# COPY --from=prisma /tmp/dev/node_modules/.prisma/client/libquery_engine-linux-musl-arm64-openssl-3.0.x.so.node ./
 COPY --from=build /tmp/dev/dist/main.js ./dist/
 COPY --from=build /tmp/dev/dist/seed.js ./dist/
 COPY --from=build /tmp/dev/package.json ./
+EXPOSE 4000
 CMD ["dist/main.js"]
