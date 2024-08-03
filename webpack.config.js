@@ -11,8 +11,8 @@ module.exports = (options, webpack) => {
     ...options,
     entry: {
       'handlers/cart/cart': 'src/handlers/cart.ts',
-      'main': 'src/main.ts',
-      'seed': 'prisma/seed.ts'
+      main: 'src/main.ts',
+      seed: 'prisma/seed.ts',
     },
     output: {
       ...options.output,
