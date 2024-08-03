@@ -1,6 +1,10 @@
 # compiled output
-/dist
-/node_modules
+dist
+node_modules
+cdk.out
+cdk.context.json
+.env*
+!.env.example
 
 # Logs
 logs

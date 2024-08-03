@@ -1,55 +1,42 @@
 import { Injectable } from '@nestjs/common';
-
-import { v4 } from 'uuid';
-
-import { Cart } from '../models';
+import { Cart, CartItemDto } from '../models';
+import { PrismaService } from '../../db/prisma.service';
+import { UserId } from '../../shared/types';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class CartService {
-  private userCarts: Record<string, Cart> = {};
+  constructor(private readonly prismaService: PrismaService) {}
 
-  findByUserId(userId: string): Cart {
-    return this.userCarts[ userId ];
+  async findByUserId(userId: UserId): Promise<Cart> {
+    return plainToClass(
+      Cart,
+      await this.prismaService.findCartByUserId(userId),
+    );
   }
 
-  createByUserId(userId: string) {
-    const id = v4();
-    const userCart = {
-      id,
-      items: [],
-    };
-
-    this.userCarts[ userId ] = userCart;
-
-    return userCart;
+  async createByUserId(userId: UserId) {
+    return plainToClass(
+      Cart,
+      await this.prismaService.createCartByUserId(userId),
+    );
   }
 
-  findOrCreateByUserId(userId: string): Cart {
-    const userCart = this.findByUserId(userId);
-
-    if (userCart) {
-      return userCart;
-    }
-
-    return this.createByUserId(userId);
+  async findOrCreateByUserId(userId: UserId): Promise<Cart> {
+    return plainToClass(
+      Cart,
+      await this.prismaService.findOrCreateCartByUserId(userId),
+    );
   }
 
-  updateByUserId(userId: string, { items }: Cart): Cart {
-    const { id, ...rest } = this.findOrCreateByUserId(userId);
-
-    const updatedCart = {
-      id,
-      ...rest,
-      items: [ ...items ],
-    }
-
-    this.userCarts[ userId ] = { ...updatedCart };
-
-    return { ...updatedCart };
+  async removeByUserId(userId:UserId) {
+    return plainToClass(
+      Cart,
+      await this.prismaService.deleteCartByUserId(userId),
+    );
   }
 
-  removeByUserId(userId): void {
-    this.userCarts[ userId ] = null;
+  async updateByUserId(userId: UserId, item: CartItemDto): Promise<Cart> {
+    return plainToClass(Cart, this.prismaService.updateByUserId(userId, item));
   }
-
 }
