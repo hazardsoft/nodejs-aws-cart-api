@@ -1,4 +1,5 @@
 import { CfnOutput } from 'aws-cdk-lib'
+import { Cors } from 'aws-cdk-lib/aws-apigateway'
 import { CorsHttpMethod, HttpApi, HttpMethod } from 'aws-cdk-lib/aws-apigatewayv2'
 import { HttpUrlIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations'
 import { Construct } from 'constructs'
@@ -19,7 +20,8 @@ export class CartServiceHttpApi extends Construct {
     const api = new HttpApi(this, 'CartServiceHttpApi', {
       description: 'HTTP API to proxy requests to EC2 instance of Elastic Beanstalk application',
       corsPreflight: {
-        allowOrigins: ['*'],
+        allowOrigins: Cors.ALL_ORIGINS,
+        allowHeaders: Cors.DEFAULT_HEADERS,
         allowMethods: [
           CorsHttpMethod.GET,
           CorsHttpMethod.OPTIONS,
