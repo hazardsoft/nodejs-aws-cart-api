@@ -70,7 +70,9 @@ export class CartServiceNetwork extends Construct {
   }
 
   getSecurityGroupsForRDS(): ISecurityGroup[] {
-    return [this.rds2LambdaPrivateSecurityGroup, this.internet2RDSPublicSecurityGroup]
+    // remove public access to RDS DB instance
+    // return [this.rds2LambdaPrivateSecurityGroup, this.internet2RDSPublicSecurityGroup]
+    return [this.rds2LambdaPrivateSecurityGroup]
   }
 
   getSecurityGroupsForLambda(): ISecurityGroup[] {

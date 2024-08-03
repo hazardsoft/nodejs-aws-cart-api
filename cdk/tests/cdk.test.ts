@@ -39,7 +39,7 @@ describe('Cart Service AWS CDK Stack Tests', () => {
       DBInstanceClass: 'db.t3.micro',
       Engine: 'postgres',
       MultiAZ: false,
-      PubliclyAccessible: true
+      PubliclyAccessible: false
     })
   })
 

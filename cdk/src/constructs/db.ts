@@ -55,7 +55,7 @@ export class CartServiceDatabase extends Construct {
       vpc: props.network.vpc,
       vpcSubnets: props.network.vpcSubnets,
       securityGroups: props.network.securityGroups,
-      publiclyAccessible: true,
+      publiclyAccessible: false,
       port: Number(Port.POSTGRES.toString()),
       performanceInsightRetention: PerformanceInsightRetention.DEFAULT,
       backupRetention: Duration.seconds(0),
