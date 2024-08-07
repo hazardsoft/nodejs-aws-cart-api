@@ -9,6 +9,11 @@ export const config = {
       password: process.env.DATABASE_PASSWORD ?? ''
     }
   },
+  servers: {
+    cart: {
+      url: process.env.CART_SERVICE_URL ?? ''
+    }
+  },
   handlers: {
     timeout: 10
   }

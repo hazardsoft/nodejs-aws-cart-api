@@ -22,6 +22,14 @@ The following env var is passed into cart handler in order to provide access to 
 
 - `DATABASE_URL` - generated dynamically based on db instance endpoint host/port values + username/password passed via `.env` file.
 
+### HTTP API
+
+Elastic Beanstalk deploy provides HTTP endpoint, but to integrate it with FE it is necessary to have HTTPS endpoint.
+In order to provide HTTPS endpoint additional HTTP API is created to proxy requests to EC2 instance of EB application.
+The following env var is used to define EB endpoint:
+
+- `CART_SERVICE_URL`
+
 ## NPM scripts
 
 - `lint` - runs ESLint with fix option

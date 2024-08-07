@@ -1,0 +1,15 @@
+# Ignore everything
+*
+# Except
+!.ebextensions
+!migrations
+!prisma
+!src
+!.dockerignore
+!Dockerfile
+!package*
+!tsconfig*
+!webpack.config*
+
+cdk/
+node_modules/

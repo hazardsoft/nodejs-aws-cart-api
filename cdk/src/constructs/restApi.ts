@@ -2,12 +2,12 @@ import { Cors, LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway'
 import type { IFunction } from 'aws-cdk-lib/aws-lambda'
 import { Construct } from 'constructs'
 
-interface CartServiceApiProps {
+interface CartServiceRestApiProps {
   cartHandler: IFunction
 }
 
-export class CartServiceApi extends Construct {
-  constructor(scope: Construct, id: string, props: CartServiceApiProps) {
+export class CartServiceRestApi extends Construct {
+  constructor(scope: Construct, id: string, props: CartServiceRestApiProps) {
     super(scope, id)
 
     const api = new RestApi(this, 'CartServiceApi')

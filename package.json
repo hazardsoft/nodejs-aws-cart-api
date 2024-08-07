@@ -21,12 +21,20 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "test:integration": "jest --config ./test/jest-integration.json",
     "prisma:generate": "prisma generate --schema ./prisma",
+    "prisma:deploy": "prisma migrate deploy --schema ./prisma",
     "prisma:deploy:local": "env-cmd --file .env.local npx prisma migrate deploy --schema ./prisma",
     "prisma:deploy:remote": "env-cmd --file .env.remote npx prisma migrate deploy --schema ./prisma",
+    "prisma:seed": "prisma db seed",
     "prisma:seed:local": "env-cmd --file .env.local prisma db seed",
     "prisma:seed:remote": "env-cmd --file .env.remote prisma db seed",
     "docker:up": "docker compose --env-file .env.local up --detach",
-    "docker:down": "docker compose down"
+    "docker:down": "docker compose down",
+    "docker:build": "docker build --tag hazardsoft/cart-service:latest .",
+    "docker:push": "docker push hazardsoft/cart-service:latest",
+    "eb:init": "eb init hazardsoft-cart-api",
+    "eb:create": "env-cmd -x -f .env.remote eb create prod --cname hazardsoft-cart-api-prod --single --envvars DATABASE_URL=\\$DATABASE_URL --instance-types=t2.micro",
+    "eb:deploy": "eb deploy prod",
+    "eb:destroy": "eb terminate --all"
   },
   "dependencies": {
     "@codegenie/serverless-express": "^4.14.1",

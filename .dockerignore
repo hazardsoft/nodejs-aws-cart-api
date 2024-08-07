@@ -1,0 +1,20 @@
+.git/
+# Contains AWS CDK stack declaration, not used during docker build
+cdk/
+# Contains compiled project files, will be compiled during docker build
+dist/
+node_modules/
+# Contains Postman collection for REST API testing, not used during docker build
+postman/
+# Contains tests, not run during docker build
+test/
+.dockerignore
+.DS_Store
+.env*
+.eslintrc.js
+.gitignore
+.prettierrc
+docker-compose.yml
+Dockerfile
+nest-cli.json
+README.md
