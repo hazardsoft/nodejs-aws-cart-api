@@ -3,9 +3,10 @@ import { CartServiceHandlers } from './constructs/handlers'
 import type { Construct } from 'constructs'
 import { config } from './config'
 import { CartServiceDatabase } from './constructs/db'
-import { CartServiceApi } from './constructs/api'
+import { CartServiceRestApi } from './constructs/restApi'
 import { CartServiceNetwork } from './constructs/network'
 import { createDatabaseUrl } from './helpers/db'
+import { CartServiceHttpApi } from './constructs/httpApi'
 
 export class CartService extends Stack {
   constructor(scope: Construct, id: string) {
@@ -52,8 +53,12 @@ export class CartService extends Stack {
 
     db.db.grantConnect(handlers.cartHandler, config.database.credentials.username)
 
-    new CartServiceApi(this, 'CartServiceApi', {
+    new CartServiceRestApi(this, 'CartServiceApi', {
       cartHandler: handlers.cartHandler
+    })
+
+    new CartServiceHttpApi(this, 'CartServiceHttpApi', {
+      serverUrl: config.servers.cart.url
     })
   }
 }

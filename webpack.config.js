@@ -9,11 +9,15 @@ module.exports = (options, webpack) => {
 
   return {
     ...options,
-    entry: './src/handlers/cart.ts',
+    entry: {
+      'handlers/cart/cart': 'src/handlers/cart.ts',
+      main: 'src/main.ts',
+      seed: 'prisma/seed.ts',
+    },
     output: {
       ...options.output,
       libraryTarget: 'commonjs2',
-      filename: 'handlers/cart/cart.js',
+      filename: '[name].js',
     },
     externals: [],
     optimization: {
