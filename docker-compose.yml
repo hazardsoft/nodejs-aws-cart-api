@@ -1,3 +1,4 @@
+name: cart-api
 services:
   db:
     image: postgres
@@ -7,3 +8,21 @@ services:
     environment:
       - POSTGRES_USER=${DATABASE_USERNAME}
       - POSTGRES_PASSWORD=${DATABASE_PASSWORD}
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USERNAME}']
+      interval: 2s
+      timeout: 2s
+      retries: 5
+
+  server:
+    image: hazardsoft/cart-service
+    command: sh -c "npm run prisma:deploy && node ./dist/seed.js && npm run start:prod"
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    environment:
+      - PORT=${SERVER_PORT}
+      - DATABASE_URL=${DATABASE_URL}
